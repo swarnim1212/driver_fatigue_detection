@@ -22,6 +22,14 @@ def eye_aspect_ratio(eye):
 
 	# return the eye aspect ratio
 	return ear
+#calculating mouth aspect ratio
+def mouth_aspect_ratio(mou):
+	X   = dist.euclidean(mou[0], mou[6])
+	Y1  = dist.euclidean(mou[2], mou[10])
+	Y2  = dist.euclidean(mou[4], mou[8])
+	Y   = (Y1+Y2)/2.0
+	mar = Y/X
+	return mar
 
 camera = cv2.VideoCapture(0)
 predictor_path = 'shape_predictor_68_face_landmarks.dat'
@@ -32,12 +40,12 @@ predictor_path = 'shape_predictor_68_face_landmarks.dat'
 # alarm
 EYE_AR_THRESH = 0.25
 EYE_AR_CONSEC_FRAMES = 48
-
+MOU_AR_THRESH = 0.75
 # initialize the frame counter as well as a boolean used to
 # indicate if the alarm is going off
 COUNTER = 0
-
-
+yawnStatus = False
+yawns = 0
 # initialize dlib's face detector (HOG-based) and then create
 # the facial landmark predictor
 detector = dlib.get_frontal_face_detector()
@@ -57,7 +65,7 @@ while True:
 	ret, frame = camera.read()
 	frame = imutils.resize(frame, width=640)
 	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
+	prev_yawn_status = yawnStatus
 	# detect faces in the grayscale frame
 	rects = detector(gray, 0)
 
@@ -76,7 +84,7 @@ while True:
 		mouth = shape[mStart:mEnd]
 		leftEAR = eye_aspect_ratio(leftEye)
 		rightEAR = eye_aspect_ratio(rightEye)
-
+		mouEAR = mouth_aspect_ratio(mouth)
 		# average the eye aspect ratio together for both eyes
 		ear = (leftEAR + rightEAR) / 2.0
 
@@ -109,9 +117,23 @@ while True:
 		# draw the computed eye aspect ratio on the frame to help
 		# with debugging and setting the correct eye aspect ratio
 		# thresholds and frame counters
-		cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30),
+		cv2.putText(frame, "EAR: {:.2f}".format(ear), (480, 30),
 			cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
+		if mouEAR > MOU_AR_THRESH:
+			cv2.putText(frame, "Yawning ", (10, 70),cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+			yawnStatus = True
+			output_text = "Yawn Count: " + str(yawns + 1)
+			cv2.putText(frame, output_text, (10,100),cv2.FONT_HERSHEY_SIMPLEX, 0.7,(255,0,0),2)
+		else:
+			yawnStatus = False
+
+		if prev_yawn_status == True and yawnStatus == False:
+			yawns+=1
+
+		cv2.putText(frame, "MAR: {:.2f}".format(mouEAR), (480, 60),
+			cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+		cv2.putText(frame,"Lusip Project @ Swarnim",(370,470),cv2.FONT_HERSHEY_COMPLEX,0.6,(153,51,102),1)
 	# show the frame
 	cv2.imshow("Frame", frame)
 	key = cv2.waitKey(1) & 0xFF
