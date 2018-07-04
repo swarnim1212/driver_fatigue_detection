@@ -8,41 +8,37 @@ import cv2
 
 #calculating eye aspect ratio
 def eye_aspect_ratio(eye):
-	# compute the euclidean distances between the two sets of
-	# vertical eye landmarks (x, y)-coordinates
+	# compute the euclidean distances between the vertical
 	A = dist.euclidean(eye[1], eye[5])
 	B = dist.euclidean(eye[2], eye[4])
 
 	# compute the euclidean distance between the horizontal
-	# eye landmark (x, y)-coordinates
 	C = dist.euclidean(eye[0], eye[3])
-
 	# compute the eye aspect ratio
 	ear = (A + B) / (2.0 * C)
-
-	# return the eye aspect ratio
 	return ear
+
 #calculating mouth aspect ratio
 def mouth_aspect_ratio(mou):
+	# compute the euclidean distances between the horizontal
 	X   = dist.euclidean(mou[0], mou[6])
+	# compute the euclidean distances between the vertical
 	Y1  = dist.euclidean(mou[2], mou[10])
 	Y2  = dist.euclidean(mou[4], mou[8])
+	# taking average
 	Y   = (Y1+Y2)/2.0
+	# compute mouth aspect ratio
 	mar = Y/X
 	return mar
 
 camera = cv2.VideoCapture(0)
 predictor_path = 'shape_predictor_68_face_landmarks.dat'
 
-# define two constants, one for the eye aspect ratio to indicate
-# blink and then a second constant for the number of consecutive
-# frames the eye must be below the threshold for to set off the
-# alarm
+# define constants for aspect ratios
 EYE_AR_THRESH = 0.25
 EYE_AR_CONSEC_FRAMES = 48
 MOU_AR_THRESH = 0.75
-# initialize the frame counter as well as a boolean used to
-# indicate if the alarm is going off
+
 COUNTER = 0
 yawnStatus = False
 yawns = 0
@@ -51,15 +47,15 @@ yawns = 0
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(predictor_path)
 
-# grab the indexes of the facial landmarks for the left and
-# right eye, respectively
+# grab the indexes of the facial landmarks for the left and right eye
+# also for the mouth
 (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
 (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]
 (mStart, mEnd) = face_utils.FACIAL_LANDMARKS_IDXS["mouth"]
 
-# loop over frames from the video stream
+# loop over captuing video
 while True:
-	# grab the frame from the threaded video file stream, resize
+	# grab the frame from the camera, resize
 	# it, and convert it to grayscale
 	# channels)
 	ret, frame = camera.read()
@@ -114,12 +110,12 @@ while True:
 		else:
 			COUNTER = 0
 			cv2.putText(frame, "Eyes Open ", (10, 30),cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-		# draw the computed eye aspect ratio on the frame to help
-		# with debugging and setting the correct eye aspect ratio
-		# thresholds and frame counters
+
 		cv2.putText(frame, "EAR: {:.2f}".format(ear), (480, 30),
 			cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
+		# yawning detections
+		
 		if mouEAR > MOU_AR_THRESH:
 			cv2.putText(frame, "Yawning ", (10, 70),cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 			yawnStatus = True
