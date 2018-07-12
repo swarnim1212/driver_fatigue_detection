@@ -115,7 +115,7 @@ while True:
 			cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
 		# yawning detections
-		
+
 		if mouEAR > MOU_AR_THRESH:
 			cv2.putText(frame, "Yawning ", (10, 70),cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 			yawnStatus = True
