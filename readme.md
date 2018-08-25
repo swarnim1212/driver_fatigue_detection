@@ -6,3 +6,23 @@ The AAA says that 20% of all fatal accidents in the USA are due to drowsiness! W
 
 ![demo](https://github.com/nimbus1212/driver_drowsiness_detection/blob/master/assets/driver-fatigue-detection.gif)
 
+### Code Requirements
+The example code is in Python ([version 2.7](https://www.python.org/download/releases/2.7/) or higher will work). 
+The code is tested under Ubuntu 18.04
+
+### Dependencies
+
+- import cv2
+- import immutils
+- import dlib
+- import scipy
+
+### Description
+A computer vision system that can automatically detect driver drowsiness by tracking closing of eyes and yawing in a real-time video stream and then alert if the driver appears to be drowsy.
+
+### Execution
+To run the code, type `python3 driverFatigue_v2.py`
+or
+
+```
+python driverFatigue_v2.py
