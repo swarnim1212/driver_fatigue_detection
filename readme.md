@@ -1,4 +1,4 @@
-# Driver Drowsiness Detection | OpenCV
+# Driver Fatigue Detection | OpenCV
 This repo can detect and track user's eyes and mouth and alert when the user is feeling drowsy using video processing techniques.
 
 ## Applications
