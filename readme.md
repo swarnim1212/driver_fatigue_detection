@@ -21,8 +21,11 @@ The code is tested under Ubuntu 18.04
 A computer vision system that can automatically detect driver drowsiness by tracking closing of eyes and yawing in a real-time video stream and then alert if the driver appears to be drowsy.
 
 ### Execution
-To run the code, type `python3 driverFatigue_v2.py`
+To run the code, perform the below command
+```
+python3 driverFatigue_v2.py
+```
 or
-
 ```
 python driverFatigue_v2.py
+```
